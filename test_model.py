@@ -7,7 +7,7 @@ from sklearn.datasets import load_breast_cancer
 from predict import make_prediction
 MODEL_PATH="best_model.joblib"
 # FIXTURE 1:Load the trained model
-@pytest.fixture
+T@pytest.fixture
 def model():
   assert os.path.exists(MODEL_PATH),"Model file not found!"
   return joblib.load(MODEL_PATH)
@@ -42,4 +42,22 @@ def model():
               assert np.all(probabilities >= 0)
               assert np.all(probabilities <=1)
               assert np.allclose(probabilities.sum(axis=1),1)
-              # TEST 6:
+              # TEST 6:Check pipeline structure
+               def test_model_pipeline(model):
+                 assert hasattr(model,"named_steps")
+                 assert"scaler"in model.named_steps
+                 assert"model"in model.named_steps
+                 # TEST 7:Check reusable prediction function
+                 def test_mark_prediction(model,sample_data):
+                   output = make_prediction(model,sample_data)
+                   assert"prediction"in output
+                   assert output["prediction"] in {"Malignant","Benign"}
+                   # TEST 8:Check probabilities returned by prediction function
+                    def test_make_prediction_probabilities(model,sample_data):
+                      output = make_prediction(model,sample_data)
+                      probabilities = output["probabilities"]
+                      assert"malignant"in probabilities
+                      assert"benign" in probabilities
+                      assert 0 <= probabilities["malignant"] <=1
+                      asssert 0 <= probabilities["benign"] <=1 
+                      
