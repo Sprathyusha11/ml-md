@@ -6,7 +6,7 @@ import pandas as pd
 import pytest
 
 from sklearn.datasets import load_breast_cancer
-from predict import make_prediction
+from sklearn.predict import make_prediction
 
 
 MODEL_PATH = "best_model.joblib"
